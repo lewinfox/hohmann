@@ -50,12 +50,8 @@ ui <- dashboardPage(
     dashboardBody(
       # Message box
       fluidRow(
-        infoBox(
-          title = "Something",
-          subtitle = "Something else",
-          value = textOutput("message_text", inline = TRUE),
-          width = 12)
-      ),
+        box(width = 12, h3(textOutput("message_text", inline = TRUE)))
+        ),
       # Boxes to display values
       fluidRow(
         valueBox(
@@ -128,7 +124,9 @@ server <- function(input, output, session) {
       output$high_estimate <- renderText(create_duration_string(high_estimate))
 
       # Show the plot
-      output$plot_output <- renderPlot(make_plot(result))
+      withProgress(message = "Rendering chart", value = 0.5, {
+        output$plot_output <- renderPlot(make_plot(result))
+      })
     } else {
       # Clear the estimates
       output$low_estimate <- renderText("No data")
