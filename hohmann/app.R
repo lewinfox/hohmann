@@ -11,7 +11,7 @@ ui <- dashboardPage(
    # Application title
    dashboardHeader(title = "Hohmann"),
 
-   # Sidebar with a slider input for number of bins
+   # Sidebar with inputs to select account type and provider
     dashboardSidebar(
       width = "25%",
       selectInput(
@@ -43,38 +43,61 @@ ui <- dashboardPage(
         inputId = "go_button",
         icon = icon("directions"),
         label = "Lookup transfer data"
+      ),
+      br(),
+      # Message box
+      div(width = 12, style = "text-align:center;",
+          h4(textOutput("message_text", inline = TRUE))
       )
     ),
 
   # Main body
     dashboardBody(
-      # Message box
-      fluidRow(
-        box(width = 12, h3(textOutput("message_text", inline = TRUE)))
-        ),
+      tags$link(rel = "stylesheet", type = "text/css", href = "master.css"),
       # Boxes to display values
       fluidRow(
-        valueBox(
-          color = "green",
-          value = textOutput("low_estimate"),
-          subtitle = "25% of transfers complete within this time"
+        box(title = "Postal rereg", width = 12,
+          valueBox(
+            color = "green",
+            value = textOutput("low_estimate_postal"),
+            subtitle = "25% of transfers complete within this time"
           ),
-        valueBox(
-          color = "orange",
-          value = textOutput("medium_estimate"),
-          subtitle = "50% of transfers complete within this time"
-        ),
-        valueBox(
-          color = "red",
-          value = textOutput("high_estimate"),
-          subtitle = "75% of transfers complete within this time"
+          valueBox(
+            color = "orange",
+            value = textOutput("medium_estimate_postal"),
+            subtitle = "50% of transfers complete within this time"
+          ),
+          valueBox(
+            color = "red",
+            value = textOutput("high_estimate_postal"),
+            subtitle = "75% of transfers complete within this time"
+          )
         )
       ),
-      # Plot of hisoric transfer times
+      fluidRow(
+        box(title = "Electronic rereg", width = 12,
+            valueBox(
+              color = "green",
+              value = textOutput("low_estimate_electronic"),
+              subtitle = "25% of transfers complete within this time"
+            ),
+            valueBox(
+              color = "orange",
+              value = textOutput("medium_estimate_electronic"),
+              subtitle = "50% of transfers complete within this time"
+            ),
+            valueBox(
+              color = "red",
+              value = textOutput("high_estimate_electronic"),
+              subtitle = "75% of transfers complete within this time"
+            )
+        )
+      ),
+      # Plot of historic transfer times
       fluidRow(
         box(
           width = 12,
-          height = "60vh",
+          # height = "60vh",
           plotOutput("plot_output")
         )
       )
@@ -110,32 +133,26 @@ server <- function(input, output, session) {
       create_message(provider, product, method, success)
     )
 
+    # Extract low med and high estimates for postal and electronic rereg
+    # TODO: Rewrite these to use quantile() assuming we have multiple
+    # transfers in the dataset
+    estimates <- get_estimates(result, success)
+
     if (success) {
-      # Extract low med and high estimates
-      # TODO: Rewrite these to use quantile() assuming we have multiple
-      # transfers in the dataset
-      low_estimate <- result$q_25[[1]]
-      medium_estimate <- result$q_50[[1]]
-      high_estimate <- result$q_75[[1]]
-
-      # Update info boxes with real data
-      output$low_estimate <- renderText(create_duration_string(low_estimate))
-      output$medium_estimate <- renderText(create_duration_string(medium_estimate))
-      output$high_estimate <- renderText(create_duration_string(high_estimate))
-
       # Show the plot
-      withProgress(message = "Rendering chart", value = 0.5, {
-        output$plot_output <- renderPlot(make_plot(result))
-      })
+      output$plot_output <- renderPlot(make_plot(result))
     } else {
-      # Clear the estimates
-      output$low_estimate <- renderText("No data")
-      output$medium_estimate <- renderText("No data")
-      output$high_estimate <- renderText("No data")
-
       # Render a blank plot to clear the plot area
       output$plot_output <- renderPlot(ggplot() + theme_void())
     }
+
+    # Update the box content
+    output$low_estimate_postal <- renderText(estimates$low_estimate_postal)
+    output$medium_estimate_postal <- renderText(estimates$medium_estimate_postal)
+    output$high_estimate_postal <- renderText(estimates$high_estimate_postal)
+    output$low_estimate_electronic <- renderText(estimates$low_estimate_electronic)
+    output$medium_estimate_electronic <- renderText(estimates$medium_estimate_electronic)
+    output$high_estimate_electronic <- renderText(estimates$high_estimate_electronic)
   })
 }
 
