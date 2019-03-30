@@ -61,17 +61,17 @@ ui <- dashboardPage(
         valueBox(
           color = "green",
           value = textOutput("low_estimate"),
-          subtitle = "Low transfer time estimate"
+          subtitle = "25% of transfers complete within this time"
           ),
         valueBox(
           color = "orange",
           value = textOutput("medium_estimate"),
-          subtitle = "Medium transfer time estimate"
+          subtitle = "50% of transfers complete within this time"
         ),
         valueBox(
           color = "red",
           value = textOutput("high_estimate"),
-          subtitle = "High transfer time estimate"
+          subtitle = "75% of transfers complete within this time"
         )
       ),
       # Plot of hisoric transfer times
@@ -103,6 +103,7 @@ server <- function(input, output, session) {
 
     # Retrieve data
     withProgress(message = "Querying transfers database", value = 0.5, {
+      # TODO: Make sure the result contains a decent number of transfers
       result <- data[data$provider == provider & data$product == product & data$method == method, ]
     })
 
@@ -115,9 +116,11 @@ server <- function(input, output, session) {
 
     if (success) {
       # Extract low med and high estimates
-      low_estimate <- rnorm(1)
-      medium_estimate <- rnorm(1)
-      high_estimate <- rnorm(1)
+      # TODO: Rewrite these to use quantile() assuming we have multiple
+      # transfers in the dataset
+      low_estimate <- result$q_25[[1]]
+      medium_estimate <- result$q_50[[1]]
+      high_estimate <- result$q_75[[1]]
 
       # Update info boxes with real data
       output$low_estimate <- renderText(create_duration_string(low_estimate))
