@@ -25,7 +25,8 @@ create_message <- function(provider, product, method, success = TRUE) {
     )
   } else {
     string <- paste("We haven't had enough", tolower(method), "transfers of",
-                    product, "accounts from", provider, "to make a prediction.")
+                    product, "accounts from", provider,
+                    "in the last six months to make a prediction.")
   }
   return(string)
 }
@@ -42,13 +43,18 @@ create_duration_string <- function(duration) {
 }
 
 make_plot <- function(data) {
-  # TODO: Use real data
+  # TODO: Use real data - this should accept the `result` data.frame and create
+  # histograms or density plots of the time taken for both postal and electronic
+  # rereg, if they exist.
   p <- ggplot(diamonds, aes(x = carat, y = price, colour = clarity)) +
     geom_point()
   return(p)
 }
 
-get_estimates <- function(data, success = TRUE, min_cases = 10) {
+get_estimates <- function(data, min_cases = 10) {
+  # Given a filtered input data.frame, work out if we have enough data to
+  # calculate estimates for electronic and postal rereg. If not, return "no
+  # data" or similar. Pick a value for min_cases that makes sense.
   result <- list(
     low_estimate_postal = create_duration_string(1),
     medium_estimate_postal = create_duration_string(2),

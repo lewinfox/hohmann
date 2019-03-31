@@ -113,7 +113,7 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$go_button, {
-    message("Click")
+    message("Fetching data...")
 
     # Collect the info from the input
     provider <- isolate(input$provider_input)
@@ -134,9 +134,9 @@ server <- function(input, output, session) {
     )
 
     # Extract low med and high estimates for postal and electronic rereg
-    # TODO: Rewrite these to use quantile() assuming we have multiple
-    # transfers in the dataset
-    estimates <- get_estimates(result, success)
+    # TODO: How will this handle missing values? Probably best to pass the
+    # entire `result` dataset in and let `get_estimates` figure out what to do.
+    estimates <- get_estimates(result)
 
     if (success) {
       # Show the plot
