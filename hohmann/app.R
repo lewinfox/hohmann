@@ -53,6 +53,7 @@ ui <- dashboardPage(
 
   # Main body
     dashboardBody(
+      # Link to custom CSS
       tags$link(rel = "stylesheet", type = "text/css", href = "master.css"),
       # Boxes to display values
       fluidRow(
@@ -97,7 +98,6 @@ ui <- dashboardPage(
       fluidRow(
         box(
           width = 12,
-          # height = "60vh",
           plotOutput("plot_output")
         )
       )
@@ -158,4 +158,3 @@ server <- function(input, output, session) {
 
 # Run the application
 shinyApp(ui = ui, server = server)
-
