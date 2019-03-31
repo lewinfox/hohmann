@@ -8,48 +8,48 @@ source("global.R")
 ui <- dashboardPage(
   skin = "purple",
 
-   # Application title
-   dashboardHeader(title = "Hohmann"),
+  # Application title
+  dashboardHeader(title = "Hohmann", titleWidth = "25%"),
 
-   # Sidebar with inputs to select account type and provider
-    dashboardSidebar(
-      width = "25%",
-      selectInput(
-        width = "100%",
-        inputId = "provider_input",
-        label = "Provider",
-        choices = list()
-      ),
-      selectInput(
-        width = "100%",
-        inputId = "product_input",
-        label = "Product type",
-        choices = list(
-          Pension = "SIPP",
-          ISA = "ISA",
-          Unwrapped = "Unwrapped"
-        )
-      ),
-      selectInput(
-        width = "100%",
-        inputId = "method_input",
-        label = "Stock or cash transfer?",
-        choices = list(
-          Stock = "Stock",
-          Cash = "Cash"
-        )
-      ),
-      actionButton(
-        inputId = "go_button",
-        icon = icon("directions"),
-        label = "Lookup transfer data"
-      ),
-      br(),
-      # Message box
-      div(width = 12, style = "text-align:center;",
-          h4(textOutput("message_text", inline = TRUE))
+  # Sidebar with inputs to select account type and provider
+  dashboardSidebar(
+    width = "25%",
+    selectInput(
+      width = "100%",
+      inputId = "provider_input",
+      label = "Provider",
+      choices = list()
+    ),
+    selectInput(
+      width = "100%",
+      inputId = "product_input",
+      label = "Product type",
+      choices = list(
+        Pension = "SIPP",
+        ISA = "ISA",
+        Unwrapped = "Unwrapped"
       )
     ),
+    selectInput(
+      width = "100%",
+      inputId = "method_input",
+      label = "Stock or cash transfer?",
+      choices = list(
+        Stock = "Stock",
+        Cash = "Cash"
+      )
+    ),
+    actionButton(
+      inputId = "go_button",
+      icon = icon("directions"),
+      label = "Look up transfer data"
+    ),
+    br(),
+    # Message box
+    div(width = 12, style = "text-align:center;",
+        h4(textOutput("message_text", inline = TRUE))
+    )
+  ),
 
   # Main body
     dashboardBody(
