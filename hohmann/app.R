@@ -6,10 +6,13 @@ source("global.R")
 
 # Define UI for application that draws a histogram
 ui <- dashboardPage(
+  title = "Hohmann | Transfer time estimation",
   skin = "purple",
 
   # Application title
-  dashboardHeader(title = "Hohmann", titleWidth = "25%"),
+  dashboardHeader(title = tags$a(href = "https://en.wikipedia.org/wiki/Hohmann_transfer_orbit",
+    tags$img(src = "hohmann-black.png", height = 20), "Hohmann"),
+    titleWidth = "25%"),
 
   # Sidebar with inputs to select account type and provider
   dashboardSidebar(

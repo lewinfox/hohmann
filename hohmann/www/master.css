@@ -3,3 +3,8 @@
   background-repeat: no-repeat;
   background-position: center;
 }
+
+a, a:hover {
+  color: white;
+  text-decoration: none;
+}
